@@ -4,7 +4,8 @@ const PORT = process.env.PORT || 3000;
 
 const connectMongo = require('./providers/mongoProvider');
 
-
+const cors = require('cors');
+app.use(cors());
 connectMongo();
 
 // Middleware
