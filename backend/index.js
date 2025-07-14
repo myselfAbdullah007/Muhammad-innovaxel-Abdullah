@@ -2,6 +2,11 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const connectMongo = require('./providers/mongoProvider');
+
+
+connectMongo();
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -10,6 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.send('Server is running!');
 });
+
+const urlRoutes = require('./routes/urlRoutes');
+app.use('/', urlRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
