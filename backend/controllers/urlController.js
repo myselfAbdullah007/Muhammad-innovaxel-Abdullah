@@ -83,4 +83,17 @@ exports.updateShortUrl = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed to update short URL.' });
   }
+};
+
+exports.deleteShortUrl = async (req, res) => {
+  const { shortCode } = req.params;
+  try {
+    const result = await Url.findOneAndDelete({ shortCode });
+    if (!result) {
+      return res.status(404).json({ error: 'Short URL not found.' });
+    }
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete short URL.' });
+  }
 }; 
