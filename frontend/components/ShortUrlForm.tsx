@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type ShortUrlResult = {
   id: string;
@@ -15,6 +15,13 @@ export default function ShortUrlForm() {
   const [result, setResult] = useState<ShortUrlResult | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,28 +49,41 @@ export default function ShortUrlForm() {
   };
 
   return (
-    <main style={{ maxWidth: 400, margin: "2rem auto", padding: 24, border: "1px solid #eee", borderRadius: 8 }}>
-      <h2>Create Short URL</h2>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <input
-          type="url"
-          placeholder="Enter long URL"
-          value={url}
-          onChange={e => setUrl(e.target.value)}
-          required
-          style={{ padding: 8, fontSize: 16 }}
-        />
-        <button type="submit" disabled={loading} style={{ padding: 8, fontSize: 16 }}>
-          {loading ? "Creating..." : "Shorten"}
-        </button>
-      </form>
-      {error && <div style={{ color: "red", marginTop: 12 }}>{error}</div>}
-      {result && (
-        <div style={{ marginTop: 16, background: "#f6f6f6", padding: 12, borderRadius: 4 }}>
-          <div><b>Short URL:</b> <code>{typeof window !== 'undefined' ? window.location.origin : ''}/shorten/{result.shortCode}</code></div>
-          <div><b>Original URL:</b> <a href={result.url} target="_blank" rel="noopener noreferrer">{result.url}</a></div>
-        </div>
-      )}
-    </main>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 font-sans">
+      <div className="bg-white rounded-2xl shadow-xl p-8 min-w-[340px] max-w-sm w-full">
+        <h2 className="mb-5 font-bold text-2xl text-center text-blue-700 tracking-tight flex items-center justify-center gap-2">
+          <span role="img" aria-label="link">🔗</span> Minimal URL Shortener
+        </h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="url"
+            placeholder="Paste your long URL here..."
+            value={url}
+            onChange={e => setUrl(e.target.value)}
+            required
+            className="px-4 py-3 text-base border border-slate-300 rounded-lg outline-none focus:border-blue-400 transition"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="py-3 text-base font-semibold bg-gradient-to-r from-indigo-500 to-blue-400 text-white rounded-lg shadow hover:from-indigo-600 hover:to-blue-500 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? "Creating..." : "Shorten URL"}
+          </button>
+        </form>
+        {error && <div className="text-rose-600 mt-4 font-medium text-center">{error}</div>}
+        {result && (
+          <div className="mt-6 bg-slate-100 p-4 rounded-lg text-center break-all">
+            <div className="text-sm text-slate-700 mb-1 font-semibold">Short URL:</div>
+            <div className="text-lg font-bold text-blue-600">
+              <code>{origin}/shorten/{result.shortCode}</code>
+            </div>
+            <div className="text-xs text-slate-500 mt-2">
+              <b>Original:</b> <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{result.url}</a>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 } 
